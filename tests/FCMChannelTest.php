@@ -3,17 +3,18 @@
 namespace NotificationChannels\FCM\Test;
 
 use Mockery;
+use PHPUnit\Framework\TestCase;
 use LaravelFCM\Sender\FCMSender;
-use Illuminate\Events\Dispatcher;
 use Illuminate\Notifications\Notifiable;
 use NotificationChannels\FCM\FCMChannel;
 use NotificationChannels\FCM\FCMMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Events\Dispatcher;
 use LaravelFCM\Response\DownstreamResponse;
 use NotificationChannels\FCM\MessageWasSended;
 use NotificationChannels\FCM\Exceptions\CouldNotSendNotification;
 
-class FCMChannelTest extends \PHPUnit_Framework_TestCase
+class FCMChannelTest extends TestCase
 {
     public function setUp()
     {
@@ -38,7 +39,7 @@ class FCMChannelTest extends \PHPUnit_Framework_TestCase
         $message->to($to);
         $args = $message->getArgs();
         $this->sender->shouldReceive('sendTo')->with(...$args)->andReturn(Mockery::mock(DownstreamResponse::class));
-        $this->events->shouldReceive('fire')->with(Mockery::type(MessageWasSended::class));
+        $this->events->shouldReceive('dispatch')->with(Mockery::type(MessageWasSended::class));
         $result = $this->channel->send($notifiable, $notification);
         $this->assertInstanceOf(DownstreamResponse::class, $result);
     }
@@ -53,7 +54,7 @@ class FCMChannelTest extends \PHPUnit_Framework_TestCase
         $message->to($to);
         $args = $message->getArgs();
         $this->sender->shouldNotReceive('sendTo');
-        $this->events->shouldNotReceive('fire');
+        $this->events->shouldNotReceive('dispatch');
         $result = $this->channel->send($notifiable, $notification);
         $this->assertNull($result);
     }
@@ -61,15 +62,15 @@ class FCMChannelTest extends \PHPUnit_Framework_TestCase
     /** @test */
     public function it_throw_could_not_send_notification_exception()
     {
-        $this->setExpectedException(CouldNotSendNotification::class);
+        $this->expectException(CouldNotSendNotification::class);
         $notifiable = new TestNotifiableWithInvalidRecipient;
         $notification = new TestNotification;
         try {
             $this->channel->send($notifiable, $notification);
         } catch (CouldNotSendNotification $e) {
             $this->assertEquals(
-              'Notification was not sent. You should specify device token(s), topic(s) or group(s) for sending notification.',
-              $e->getMessage()
+                'Notification was not sent. You should specify device token(s), topic(s) or group(s) for sending notification.',
+                $e->getMessage()
             );
             throw $e;
         }
