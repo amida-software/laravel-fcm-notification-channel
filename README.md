@@ -1,4 +1,4 @@
-# FCM notification channel for Laravel 5.3
+# FCM notification channel for Laravel 6.x
 
 This package makes it easy to send notifications using [Firebase Cloud Messaging](https://firebase.google.com/docs/cloud-messaging/) (FCM) with Laravel 5.3.
 This package is based on [brozot/laravel-fcm](https://github.com/brozot/Laravel-FCM), so please read that documentation for more information.
@@ -17,19 +17,36 @@ This package is based on [brozot/laravel-fcm](https://github.com/brozot/Laravel-
 
 ## Installation
 
-You can install this package via composer:
+Before installation you should to add the following code to your `composer.json` file :
+```
+"repositories": [
+    {
+        "type": "vcs",
+        "url": "https://github.com/ahmed-aliraqi/laravel-fcm-notification-channel"
+    }
+],
+```
+
+Now you can install this package via composer:
 
 ``` bash
-composer require enniel/laravel-fcm-notification-channel:1.*
+composer require enniel/laravel-fcm-notification-channel
 ```
-Register the provider directly in your app configuration file `config/app.php`:
-``` php
-'providers' => [
-    // ...
 
-    NotificationChannels\FCM\ServiceProvider::class 
-]
+## Package Configuration
+
+In your `.env` file, add the server key and the secret key for the Firebase Cloud Messaging:
+
+```dotenv
+FCM_SERVER_KEY=my_secret_server_key
+FCM_SENDER_ID=my_secret_sender_id
 ```
+
+To get these keys, you must create a new application on the [firebase cloud messaging console](https://console.firebase.google.com/).
+
+After the creation of your application on Firebase, you can find keys in `project settings -> cloud messaging`.
+
+
 
 ## Usage
 
@@ -49,7 +66,7 @@ class ExampleNotification extends Notification
     public function toFCM($notifiable)
     {
         return (new FCMMessage())
-            ->notification([
+            ->data([
                 'title' => 'Notification title',
                 'body' => 'Notification body',
             ]);
