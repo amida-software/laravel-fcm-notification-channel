@@ -17,7 +17,7 @@ This package is based on [brozot/laravel-fcm](https://github.com/brozot/Laravel-
 
 ## Installation
 
-Before installation you should to add the following code to your `composer.json` file :
+Before installation you should to add this repository to your `composer.json` file :
 ```
 "repositories": [
     {
