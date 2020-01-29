@@ -150,11 +150,9 @@ class FCMMessage
     /**
      * Call method.
      *
-     * @param  string $method
-     * @param  mixed $value
-     *
+     * @param  string  $method
+     * @param  array  $arguments
      * @return mixed
-     * @throws \BadMethodCallException
      */
     public function __call($method, array $arguments)
     {
@@ -196,9 +194,10 @@ class FCMMessage
     /**
      * Create Message.
      *
-     * @param mixed $options
-     * @param mixed $notification
-     * @param mixed $data
+     * @param  mixed  $options
+     * @param  mixed  $notification
+     * @param  mixed  $data
+     * @return \NotificationChannels\FCM\FCMMessage
      */
     public static function create($options = null, $notification = null, $data = null)
     {
@@ -244,7 +243,7 @@ class FCMMessage
         }
 
         return new InvalidArgumentException(
-           'The argument for %s::%s must be instanceof %s, %s, null or array. %s given.',
+            'The argument for %s::%s must be instanceof %s, %s, null or array. %s given.',
             [
                 self::class, $method, $container, $builder, $type,
             ]
@@ -273,7 +272,7 @@ class FCMMessage
      * Set Options.
      *
      * @param mixed $options
-     * @return
+     * @return $this
      */
     public function options($options = null)
     {
